@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <random> 
+
 
 extern const int cellSize;
 
@@ -24,6 +26,7 @@ public:
     void draw(sf::RenderWindow& window) const;
     void setCell(int x, int y, CellType type);
     CellType getCell(int x, int y) const;
+	 void generateRandomObstacles(); 
 
 private:
     int cols, rows;

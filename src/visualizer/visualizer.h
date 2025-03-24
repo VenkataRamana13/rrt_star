@@ -4,7 +4,7 @@
 
 class Visualizer {
 public:
-    Visualizer(int cols, int rows);
+    Visualizer(int cols, int rows, bool randomize);
     void run();
 
 private:

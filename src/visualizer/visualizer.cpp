@@ -1,11 +1,17 @@
 #include "visualizer.h"
+ 
+float obstacleProbability = 0.25; 
 
-Visualizer::Visualizer(int cols, int rows)
+Visualizer::Visualizer(int cols, int rows, bool randomize)
     : window(sf::VideoMode(cols * cellSize, rows * cellSize), "RRT* Visualizer"),
       grid(cols, rows) {
     window.setFramerateLimit(60);
     grid.setCell(1, 1, CellType::START);
     grid.setCell(cols - 2, rows - 2, CellType::GOAL);
+
+    if (randomize) {
+        grid.generateRandomObstacles();
+    }
 }
 
 void Visualizer::run() {
