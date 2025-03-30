@@ -3,11 +3,13 @@
  
 float obstacleProbability = 0.25; 
 
+//wrapper visualizer 
 void Visualizer::run(std::atomic<bool>& triggerRRT, std::atomic<bool>& running) {
     while (window.isOpen() && running) {
         handleEvents();
         render();
 
+		  //triggerRRT is true if 'rrt' input in main
         if (triggerRRT) {
             runRRT();           // existing function
             triggerRRT = false; // reset trigger
@@ -15,6 +17,7 @@ void Visualizer::run(std::atomic<bool>& triggerRRT, std::atomic<bool>& running) 
     }
 }
 
+//ignore: for testing
 std::vector<std::pair<int, int>> generateStubPath(int startX, int startY, int goalX, int goalY) {
     std::vector<std::pair<int, int>> path;
     int midX = (startX + goalX) / 2;
@@ -31,10 +34,13 @@ std::vector<std::pair<int, int>> generateStubPath(int startX, int startY, int go
     return path;
 }
 
+//sets cols and rows, if 'rrt' prompted from user, runs addrrt according to other parameters set in main
 Visualizer::Visualizer(int cols, int rows, bool randomize, bool addStub, bool addrrt)
     : window(sf::VideoMode(cols * cellSize, rows * cellSize), "RRT* Visualizer"),
       grid(cols, rows), cols(cols), rows(rows) {
     window.setFramerateLimit(60);
+
+	 //sets start and goal 
     grid.setCell(1, 1, CellType::START);
     grid.setCell(cols - 2, rows - 2, CellType::GOAL);
 
@@ -51,13 +57,16 @@ Visualizer::Visualizer(int cols, int rows, bool randomize, bool addStub, bool ad
 	 }
 }
 
+//handles input from user
 void Visualizer::handleEvents() {
     sf::Event event;
+	 //if pressed on close, close window
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed)
             window.close();
     }
 
+	 //sets obstacles with mouse's left click
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
         sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
@@ -68,6 +77,7 @@ void Visualizer::handleEvents() {
 }
 
 void Visualizer::render() {
+	 //background color white
     window.clear(sf::Color::White);
     grid.draw(window);
     window.display();
@@ -86,9 +96,11 @@ void Visualizer::runRRT(){
     int stepSize = 1;
     double radius = 10.0;
 
+	 //checks if rrt path exists
     RRT rrt(cols, rows, grid, window, maxIterations, stepSize, radius);
     bool success = rrt.run();
 
+	 //prints path found if rrt successful else prints failed as below 
     if (success) {
         std::cout << "Path found.\n";
         auto path = rrt.getPath();

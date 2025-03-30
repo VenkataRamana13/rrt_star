@@ -1,5 +1,6 @@
 #pragma once
 
+//node data structure which stores location, cost from start, and its parent node; 
 struct Node {
     int x, y;
     double cost;

@@ -7,6 +7,7 @@
 std::atomic<bool> triggerRRT(false);
 std::atomic<bool> running(true);
 
+//take contionuous input from user even after pop up window
 void inputThreadLoop() {
     std::string command;
     while (running) {
@@ -22,6 +23,7 @@ void inputThreadLoop() {
 }
 
 int main() {
+	 //cols and rows values
     const int cols = 40;
     const int rows = 30;
 
@@ -29,11 +31,13 @@ int main() {
     bool addStub = false;
     bool addrrt = false;
 	
+	 //randomizing obstacles
 	 char r;
 	 std::cout << "randomize obstacles?(y/n)"; 
 	 std::cin >> r; 
 	 if(r == 'y' or r == 'Y') randomize = true; 
 
+	 //addStub is inconsequential: added for conveniance during testing
     Visualizer visualizer(cols, rows, randomize, addStub, addrrt);
 
     // Start input listener thread

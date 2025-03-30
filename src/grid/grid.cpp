@@ -2,10 +2,12 @@
 
 const int cellSize = 20;
 
+//set the size of the grid
 Grid::Grid(int cols, int rows) : cols(cols), rows(rows) {
     grid.resize(rows, std::vector<Cell>(cols));
 }
 
+//loops through entire cell in the grid and assigns color based on its cell type
 void Grid::draw(sf::RenderWindow& window) const {
     for (int y = 0; y < rows; ++y) {
         for (int x = 0; x < cols; ++x) {
@@ -26,12 +28,14 @@ void Grid::draw(sf::RenderWindow& window) const {
     }
 }
 
+//sets cell according to its type
 void Grid::setCell(int x, int y, CellType type) {
     if (x >= 0 && x < cols && y >= 0 && y < rows) {
         grid[y][x].type = type;
     }
 }
 
+//gets cell type: primarily for checking if the cell is an obstacle
 CellType Grid::getCell(int x, int y) const {
     if (x >= 0 && x < cols && y >= 0 && y < rows) {
         return grid[y][x].type;
@@ -39,6 +43,7 @@ CellType Grid::getCell(int x, int y) const {
     return CellType::FREE;
 }
 
+//function to generate random obstacles
 void Grid::generateRandomObstacles() {
 	 //fill quarter of the space with obstacles
 	 float obstacleProbability = 0.25; 
@@ -63,6 +68,7 @@ void Grid::generateRandomObstacles() {
     }
 }
 
+//for each of the points in rrt path: assigns path
 void Grid::addRRTPath(const std::vector<std::pair<int, int>>& path) {
     for (const auto& [x, y] : path) {
         // Avoid overwriting start and goal
@@ -72,6 +78,7 @@ void Grid::addRRTPath(const std::vector<std::pair<int, int>>& path) {
     }
 }
 
+//ignore:for testing
 void Grid::addStubPath(const std::vector<std::pair<int, int>>& path) {
     for (auto [x, y] : path) {
         if (getCell(x, y) == CellType::FREE) {
@@ -80,6 +87,8 @@ void Grid::addStubPath(const std::vector<std::pair<int, int>>& path) {
     }
 }
 
+//to check if line is free between points(x1, y1) and (x2, y2)
+//uses bresenham's line drawing algorithm 
 bool Grid::lineIsFree(int x1, int y1, int x2, int y2) const {
     int dx = std::abs(x2 - x1);
     int dy = -std::abs(y2 - y1);

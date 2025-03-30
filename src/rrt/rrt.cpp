@@ -6,8 +6,6 @@
 
 RRT::RRT(int cols_, int rows_, Grid& grid_, sf::RenderWindow& window_, int maxIter, int stepSz, double radius_)
     : cols(cols_), rows(rows_), grid(grid_), window(window_), maxIterations(maxIter), stepSize(stepSz), radius(radius_) {
-//    auto [sx, sy] = 1, 1; 
-//    auto [gx, gy] = 38, 28; 
 
 	 int sx = 1, sy = 1; 
 	 int gx = cols - 2, gy = rows - 2; 
@@ -17,23 +15,28 @@ RRT::RRT(int cols_, int rows_, Grid& grid_, sf::RenderWindow& window_, int maxIt
     nodes.push_back(start);
 }
 
+
 bool RRT::run() {
     for (int i = 0; i < maxIterations; ++i) {
+		  //first sample, then take nearest from nodes, create a new node in the direction of sampled point
         Node* xRand = sample();
         Node* xNear = nearest(xRand);
         Node* xNew = steer(xNear, xRand);
 
+		  //check for obstacles and other edge cases
         if (!xNew || !isCollisionFree(xNear->x, xNear->y, xNew->x, xNew->y)) {
             delete xNew;
             delete xRand;
             continue;
         }
 
+		  //get a list of neighbors according to radius
         auto neighbors = near(xNew);
 
         Node* bestParent = xNear;
         double minCost = xNear->cost + distance(xNear, xNew);
 
+		  //select best parent in the radius according to least cost
         for (Node* n : neighbors) {
             if (isCollisionFree(n->x, n->y, xNew->x, xNew->y)) {
                 double c = n->cost + distance(n, xNew);
@@ -44,6 +47,7 @@ bool RRT::run() {
             }
         }
 
+		  //assign parent and cost etc. 
         xNew->parent = bestParent;
         xNew->cost = minCost;
         nodes.push_back(xNew);
@@ -51,10 +55,13 @@ bool RRT::run() {
 		  window.clear();
 		  grid.draw(window);
 		  window.display();
+		  //time delay of 200 milliseconds to let us see how the algorithm proceeds with exploration
 		  std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
+		  //rewire neighbors accordingly if cost from new node is lesser
         rewire(xNew, neighbors);
 
+		  //if goal reached return true and end rrt - star
         if (isGoalReached(xNew)) {
             goal->parent = xNew;
             return true;
@@ -65,6 +72,7 @@ bool RRT::run() {
     return false;
 }
 
+//returns final path
 std::vector<std::pair<int, int>> RRT::getPath() const {
     std::vector<std::pair<int, int>> path;
     Node* current = goal;
@@ -76,12 +84,14 @@ std::vector<std::pair<int, int>> RRT::getPath() const {
     return path;
 }
 
+//samples a point
 Node* RRT::sample() {
     int x = rand() % cols; 
     int y = rand() % rows; 
     return new Node(x, y);
 }
 
+//finds nearest node
 Node* RRT::nearest(Node* node) {
     Node* best = nullptr;
     double bestDist = 1e9;
@@ -95,6 +105,7 @@ Node* RRT::nearest(Node* node) {
     return best;
 }
 
+//returns a node in that direction
 Node* RRT::steer(Node* from, Node* to) {
     int dx = to->x - from->x;
     int dy = to->y - from->y;
@@ -115,6 +126,7 @@ Node* RRT::steer(Node* from, Node* to) {
     return new Node(newX, newY);
 }
 
+//returns neighbors within a radius
 std::vector<Node*> RRT::near(Node* node) {
     std::vector<Node*> neighbors;
     for (Node* n : nodes) {
@@ -124,6 +136,7 @@ std::vector<Node*> RRT::near(Node* node) {
     return neighbors;
 }
 
+//rewires neighboring nodes if distance from new node is lesser
 void RRT::rewire(Node* xNew, const std::vector<Node*>& neighbors) {
     for (Node* n : neighbors) {
         double newCost = xNew->cost + distance(xNew, n);
@@ -134,15 +147,18 @@ void RRT::rewire(Node* xNew, const std::vector<Node*>& neighbors) {
     }
 }
 
+//checks if obstacle not present between line
 bool RRT::isCollisionFree(int x1, int y1, int x2, int y2) {
     // use Grid's internal function
     return grid.lineIsFree(x1, y1, x2, y2);
 }
 
+//distance between node a and node b
 int RRT::distance(Node* a, Node* b) {
 	 return std::abs(a->x - b->x) + std::abs(a->y - b->y); 
 }
 
+//returns true if goal's reached
 bool RRT::isGoalReached(Node* node) {
     return distance(node, goal) <= stepSize;
 }
