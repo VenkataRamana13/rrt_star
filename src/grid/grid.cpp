@@ -67,9 +67,8 @@ void Grid::addRRTPath(const std::vector<std::pair<int, int>>& path) {
     for (const auto& [x, y] : path) {
         // Avoid overwriting start and goal
         if (grid[y][x].type != CellType::START && grid[y][x].type != CellType::GOAL) {
-            grid[y][x].type = CellType::TREE;
+            grid[y][x].type = CellType::PATH;
         }
-		  std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 }
 

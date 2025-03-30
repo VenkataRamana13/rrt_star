@@ -92,7 +92,7 @@ void Visualizer::runRRT(){
     if (success) {
         std::cout << "Path found.\n";
         auto path = rrt.getPath();
-        grid.addStubPath(path);
+        grid.addRRTPath(path);
     } else {
         std::cout << "Failed to find a path.\n";
     }
