@@ -4,6 +4,7 @@
 #include <random> 
 #include <thread>
 #include <chrono> 
+#include <utility>
 
 extern const int cellSize;
 
@@ -27,7 +28,7 @@ public:
     void draw(sf::RenderWindow& window) const;
     void setCell(int x, int y, CellType type);
     CellType getCell(int x, int y) const;
-	 void generateRandomObstacles(); 
+	 void generateRandomObstacles(std::pair<int, int>& start, std::pair<int, int>& end); 
 	 void addStubPath(const std::vector<std::pair<int, int>>& path);
 	 void addRRTPath(const std::vector<std::pair<int, int>>& path); 
 	 bool lineIsFree(int, int, int, int) const; 

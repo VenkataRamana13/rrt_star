@@ -4,14 +4,14 @@
 #include <algorithm>
 #include <SFML/Graphics.hpp> 
 
-RRT::RRT(int cols_, int rows_, Grid& grid_, sf::RenderWindow& window_, int maxIter, int stepSz, double radius_)
-    : cols(cols_), rows(rows_), grid(grid_), window(window_), maxIterations(maxIter), stepSize(stepSz), radius(radius_) {
+RRT::RRT(int cols_, int rows_, std::pair<int, int>& begin_, std::pair<int, int>& end_, Grid& grid_, sf::RenderWindow& window_, int maxIter, int stepSz, double radius_)
+    : cols(cols_), rows(rows_), begin(begin_), end(end_), grid(grid_), window(window_), maxIterations(maxIter), stepSize(stepSz), radius(radius_) {
 
 	 int sx = 1, sy = 1; 
 	 int gx = cols - 2, gy = rows - 2; 
 
-    start = new Node(sx, sy);
-    goal = new Node(gx, gy);
+    start = new Node(begin.first, begin.second);
+    goal = new Node(end.first, end.second);
     nodes.push_back(start);
 }
 

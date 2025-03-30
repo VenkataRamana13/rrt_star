@@ -4,10 +4,11 @@
 #include "node.h"
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <utility>
 
 class RRT {
 public:
-    RRT(int cols, int rows, Grid& grid, sf::RenderWindow& window, int maxIterations, int stepSize, double radius);
+    RRT(int cols, int rows, std::pair<int, int>& begin, std::pair<int, int>& end,  Grid& grid, sf::RenderWindow& window, int maxIterations, int stepSize, double radius);
 
     bool run();
     std::vector<std::pair<int, int>> getPath() const;
@@ -15,6 +16,8 @@ public:
 private:
 	 int cols; 
 	 int rows; 
+	 std::pair<int, int> begin; 
+	 std::pair<int, int> end; 
     Grid& grid;
 	 sf::RenderWindow& window; 
     int maxIterations;

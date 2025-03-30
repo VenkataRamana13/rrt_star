@@ -35,17 +35,20 @@ std::vector<std::pair<int, int>> generateStubPath(int startX, int startY, int go
 }
 
 //sets cols and rows, if 'rrt' prompted from user, runs addrrt according to other parameters set in main
-Visualizer::Visualizer(int cols, int rows, bool randomize, bool addStub, bool addrrt)
+Visualizer::Visualizer(int cols, int rows, std::pair<int, int>& start, std::pair<int, int>& end, bool randomize, bool addStub, bool addrrt)
     : window(sf::VideoMode(cols * cellSize, rows * cellSize), "RRT* Visualizer"),
-      grid(cols, rows), cols(cols), rows(rows) {
-    window.setFramerateLimit(60);
 
+      grid(cols, rows), cols(cols), rows(rows), start(start), end(end) {
+    window.setFramerateLimit(60);
+	 view.reset(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y)); 
+	 window.setView(view); 
+	 
 	 //sets start and goal 
-    grid.setCell(1, 1, CellType::START);
-    grid.setCell(cols - 2, rows - 2, CellType::GOAL);
+    grid.setCell(start.first, start.second, CellType::START);
+    grid.setCell(end.first, end.second, CellType::GOAL);
 
     if (randomize) {
-        grid.generateRandomObstacles();
+        grid.generateRandomObstacles(start, end);
     }
 	 
 	 if(addStub){
@@ -74,11 +77,28 @@ void Visualizer::handleEvents() {
         int y = static_cast<int>(worldPos.y) / cellSize;
         grid.setCell(x, y, CellType::OBSTACLE);
     }
+	 
+	 //for scrolling
+	 float scrollSpeed = 50.0f; 
+	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		  view.move(-scrollSpeed, 0);
+	 }
+	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+		  view.move(scrollSpeed, 0);
+	 }
+	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+		  view.move(0, -scrollSpeed);
+	 }
+	 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+		  view.move(0, scrollSpeed);
+	 }
+	 window.setView(view); 
 }
 
 void Visualizer::render() {
 	 //background color white
     window.clear(sf::Color::White);
+	 window.setView(view); 
     grid.draw(window);
     window.display();
 }
@@ -92,12 +112,12 @@ void Visualizer::runRRT(){
 	 std::cout << "Running RRT*..." << std::endl;
 
     // Parameters: iterations, step size, radius
-    int maxIterations = 2000;
+    int maxIterations = 20000;
     int stepSize = 1;
     double radius = 10.0;
 
 	 //checks if rrt path exists
-    RRT rrt(cols, rows, grid, window, maxIterations, stepSize, radius);
+    RRT rrt(cols, rows, start, end, grid, window, maxIterations, stepSize, radius);
     bool success = rrt.run();
 
 	 //prints path found if rrt successful else prints failed as below 

@@ -44,7 +44,7 @@ CellType Grid::getCell(int x, int y) const {
 }
 
 //function to generate random obstacles
-void Grid::generateRandomObstacles() {
+void Grid::generateRandomObstacles(std::pair<int, int>& start, std::pair<int, int>& end) {
 	 //fill quarter of the space with obstacles
 	 float obstacleProbability = 0.25; 
 	 
@@ -58,8 +58,8 @@ void Grid::generateRandomObstacles() {
     for (int x = 0; x < rows; x++) {
         for (int y = 0; y < cols; y++) {
 				//continue if start node or end node
-				if(x == 1 and y == 1) continue; 
-				if(x == rows - 2 and y == cols - 2) continue; 
+				if(x == start.first and y == start.second) continue; 
+				if(x == end.first and y == end.second) continue; 
 						  
             if (dis(gen) < obstacleProbability) {
                 grid[x][y].type = CellType::OBSTACLE;
