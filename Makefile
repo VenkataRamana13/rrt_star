@@ -6,7 +6,7 @@ CXXFLAGS = -std=c++17 -Wall
 SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
 # Files
-SRCS = src/main.cpp src/grid/grid.cpp src/visualizer/visualizer.cpp
+SRCS = src/main.cpp src/grid/grid.cpp src/visualizer/visualizer.cpp src/rrt/rrt.cpp
 OBJS = $(SRCS:.cpp=.o)
 TARGET = rrt_visualizer
 

@@ -63,3 +63,48 @@ void Grid::generateRandomObstacles() {
     }
 }
 
+void Grid::addRRTPath(const std::vector<std::pair<int, int>>& path) {
+    for (const auto& [x, y] : path) {
+        // Avoid overwriting start and goal
+        if (grid[y][x].type != CellType::START && grid[y][x].type != CellType::GOAL) {
+            grid[y][x].type = CellType::TREE;
+        }
+		  std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
+}
+
+void Grid::addStubPath(const std::vector<std::pair<int, int>>& path) {
+    for (auto [x, y] : path) {
+        if (getCell(x, y) == CellType::FREE) {
+            setCell(x, y, CellType::PATH);
+        }
+    }
+}
+
+bool Grid::lineIsFree(int x1, int y1, int x2, int y2) const {
+    int dx = std::abs(x2 - x1);
+    int dy = -std::abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx + dy;
+
+    while (true) {
+        if (getCell(x1, y1) == CellType::OBSTACLE)
+            return false;
+
+        if (x1 == x2 && y1 == y2)
+            break;
+
+        int e2 = 2 * err;
+        if (e2 >= dy) {
+            err += dy;
+            x1 += sx;
+        }
+        if (e2 <= dx) {
+            err += dx;
+            y1 += sy;
+        }
+    }
+
+    return true;
+}
