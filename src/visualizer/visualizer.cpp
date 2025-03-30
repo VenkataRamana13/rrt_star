@@ -86,7 +86,7 @@ void Visualizer::runRRT(){
     int stepSize = 1;
     double radius = 10.0;
 
-    RRT rrt(grid, maxIterations, stepSize, radius);
+    RRT rrt(grid, window, maxIterations, stepSize, radius);
     bool success = rrt.run();
 
     if (success) {
