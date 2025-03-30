@@ -33,7 +33,7 @@ std::vector<std::pair<int, int>> generateStubPath(int startX, int startY, int go
 
 Visualizer::Visualizer(int cols, int rows, bool randomize, bool addStub, bool addrrt)
     : window(sf::VideoMode(cols * cellSize, rows * cellSize), "RRT* Visualizer"),
-      grid(cols, rows) {
+      grid(cols, rows), cols(cols), rows(rows) {
     window.setFramerateLimit(60);
     grid.setCell(1, 1, CellType::START);
     grid.setCell(cols - 2, rows - 2, CellType::GOAL);
@@ -86,7 +86,7 @@ void Visualizer::runRRT(){
     int stepSize = 1;
     double radius = 10.0;
 
-    RRT rrt(grid, window, maxIterations, stepSize, radius);
+    RRT rrt(cols, rows, grid, window, maxIterations, stepSize, radius);
     bool success = rrt.run();
 
     if (success) {

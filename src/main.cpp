@@ -28,6 +28,11 @@ int main() {
     bool randomize = false;
     bool addStub = false;
     bool addrrt = false;
+	
+	 char r;
+	 std::cout << "randomize obstacles?(y/n)"; 
+	 std::cin >> r; 
+	 if(r == 'y' or r == 'Y') randomize = true; 
 
     Visualizer visualizer(cols, rows, randomize, addStub, addrrt);
 

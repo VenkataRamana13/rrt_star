@@ -12,6 +12,8 @@ public:
 private:
     sf::RenderWindow window;
     Grid grid;
+	 int cols; 
+	 int rows; 
 
     void handleEvents();
     void render();
